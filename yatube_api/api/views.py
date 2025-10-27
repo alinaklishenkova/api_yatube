@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework import viewsets, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -20,12 +17,16 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise permissions.PermissionDenied('Изменение чужого контента запрещено!')
+            raise permissions.PermissionDenied(
+                'Изменение чужого контента запрещено!'
+            )
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise permissions.PermissionDenied('Удаление чужого контента запрещено!')
+            raise permissions.PermissionDenied(
+                'Удаление чужого контента запрещено!'
+            )
         instance.delete()
 
 
@@ -49,18 +50,25 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise permissions.PermissionDenied('Изменение чужого контента запрещено!')
+            raise permissions.PermissionDenied(
+                'Изменение чужого контента запрещено!'
+            )
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise permissions.PermissionDenied('Удаление чужого контента запрещено!')
+            raise permissions.PermissionDenied(
+                'Удаление чужого контента запрещено!'
+            )
         instance.delete()
 
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer = self.serializer_class(
+            data=request.data,
+            context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
