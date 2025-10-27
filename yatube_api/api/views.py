@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -17,16 +18,12 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise permissions.PermissionDenied(
-                'Изменение чужого контента запрещено!'
-            )
+            raise PermissionDenied('Изменение чужого контента запрещено!')
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise permissions.PermissionDenied(
-                'Удаление чужого контента запрещено!'
-            )
+            raise PermissionDenied('Удаление чужого контента запрещено!')
         instance.delete()
 
 
@@ -50,16 +47,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise permissions.PermissionDenied(
-                'Изменение чужого контента запрещено!'
-            )
+            raise PermissionDenied('Изменение чужого контента запрещено!')
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise permissions.PermissionDenied(
-                'Удаление чужого контента запрещено!'
-            )
+            raise PermissionDenied('Удаление чужого контента запрещено!')
         instance.delete()
 
 
